@@ -3,7 +3,7 @@
 namespace A2lix\I18nDoctrineBundle\EventListener;
 
 use Doctrine\Common\Annotations\Reader,
-    Doctrine\Common\Persistence\ObjectManager;
+    Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Controller Listener
@@ -18,9 +18,9 @@ abstract class ControllerListener
     /**
      *
      * @param \Doctrine\Common\Annotations\Reader $annotationReader
-     * @param \Doctrine\Common\Persistence\ObjectManager $om
+     * @param \Doctrine\ORM\EntityManagerInterface $om
      */
-    public function __construct(Reader $annotationReader, ObjectManager $om)
+    public function __construct(Reader $annotationReader, EntityManagerInterface $om)
     {
         $this->annotationReader = $annotationReader;
         $this->om = $om;
