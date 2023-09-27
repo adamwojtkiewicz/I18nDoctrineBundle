@@ -3,7 +3,7 @@
 namespace A2lix\I18nDoctrineBundle\Doctrine\ORM\EventListener;
 
 use A2lix\I18nDoctrineBundle\EventListener\ControllerListener as BaseControllerListener,
-    Symfony\Component\HttpKernel\Event\FilterControllerEvent,
+    Symfony\Component\HttpKernel\Event\ControllerEvent,
     Doctrine\Common\Util\ClassUtils;
 
 /**
@@ -15,10 +15,10 @@ class ControllerListener extends BaseControllerListener
 {
     /**
      *
-     * @param \Symfony\Component\HttpKernel\Event\FilterControllerEvent $event
+     * @param \Symfony\Component\HttpKernel\Event\ControllerEvent $event
      * @return type
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelController(ControllerEvent $event)
     {
         $controller = $event->getController();
         list($object, $method) = $controller;
