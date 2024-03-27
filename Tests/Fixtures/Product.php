@@ -1,7 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace A2lix\I18nDoctrineBundle\Tests\Fixtures;
 
+use A2lix\I18nDoctrineBundle\Doctrine\ORM\Util\Translatable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -11,7 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Product
 {
-    use \A2lix\I18nDoctrineBundle\Doctrine\ORM\Util\Translatable;
+    use Translatable;
 
     /**
      * @ORM\Column(type="integer")
@@ -23,14 +28,14 @@ class Product
     /**
      * @Assert\Valid(deep=true)
      */
-    protected $translations;
+    protected Collection $translations;
 
-    public function __contruct()
+    public function __construct()
     {
-        $this->translations = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->translations = new ArrayCollection();
     }
 
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }

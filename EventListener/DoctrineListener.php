@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace A2lix\I18nDoctrineBundle\EventListener;
 
 use Doctrine\Common\EventSubscriber;
@@ -11,14 +13,7 @@ use Doctrine\Common\EventSubscriber;
  */
 abstract class DoctrineListener implements EventSubscriber
 {
-    /**
-     *
-     * @param \ReflectionClass $reflClass
-     * @param type $traitName
-     * @param type $isRecursive
-     * @return boolean
-     */
-    protected function hasTrait(\ReflectionClass $reflClass, $traitName, $isRecursive = false)
+    protected function hasTrait(\ReflectionClass $reflClass, string $traitName, bool $isRecursive = false): bool
     {
         if (in_array($traitName, $reflClass->getTraitNames())) {
             return true;
@@ -26,7 +21,7 @@ abstract class DoctrineListener implements EventSubscriber
 
         $parentClass = $reflClass->getParentClass();
 
-        if ((false === $isRecursive) || (false === $parentClass) || (null === $parentClass)) {
+        if ((false === $isRecursive) || (false === $parentClass)) {
             return false;
         }
 

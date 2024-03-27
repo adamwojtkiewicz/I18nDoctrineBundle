@@ -1,6 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace A2lix\I18nDoctrineBundle\Doctrine\ORM\Util;
+
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * Translatable trait.
@@ -9,30 +14,30 @@ namespace A2lix\I18nDoctrineBundle\Doctrine\ORM\Util;
  */
 trait Translatable
 {
-    public function getTranslations()
+    public function getTranslations(): Collection
     {
-        return $this->translations = $this->translations ? : new \Doctrine\Common\Collections\ArrayCollection();
+        return $this->translations = $this->translations ? : new ArrayCollection();
     }
 
-    public function setTranslations(\Doctrine\Common\Collections\ArrayCollection $translations)
+    public function setTranslations(Collection $translations): self
     {
         $this->translations = $translations;
         return $this;
     }
 
-    public function addTranslation($translation)
+    public function addTranslation($translation): self
     {
         $this->getTranslations()->set($translation->getLocale(), $translation);
         $translation->setTranslatable($this);
         return $this;
     }
 
-    public function removeTranslation($translation)
+    public function removeTranslation($translation): void
     {
         $this->getTranslations()->removeElement($translation);
     }
 
-    public static function getTranslationEntityClass()
+    public static function getTranslationEntityClass(): string
     {
         return __CLASS__ . 'Translation';
     }
@@ -44,17 +49,15 @@ trait Translatable
 
     public function __call($method, $args)
     {
-        $method = ('get' === substr($method, 0, 3)) ? $method : 'get'. ucfirst($method);
+        $method = (str_starts_with($method, 'get')) ? $method : 'get'. ucfirst($method);
 
         if (!$translation = $this->getCurrentTranslation()) {
-            return;
+            return null;
         }
 
         if (method_exists($translation, $method)) {
-            return call_user_func(array($translation, $method));
+            return call_user_func([$translation, $method]);
         }
-
-        return;
     }
 
 }

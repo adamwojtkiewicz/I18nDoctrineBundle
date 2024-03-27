@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace A2lix\I18nDoctrineBundle\Doctrine\ODM\EventListener;
 
-use A2lix\I18nDoctrineBundle\EventListener\ControllerListener as BaseControllerListener,
-    Symfony\Component\HttpKernel\Event\FilterControllerEvent,
-    Doctrine\Common\Util\ClassUtils;
+use A2lix\I18nDoctrineBundle\EventListener\ControllerListener as BaseControllerListener;
+use Doctrine\Common\Util\ClassUtils;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use A2lix\I18nDoctrineBundle\Annotation\I18nDoctrine;
 
 /**
  * Controller Listener
@@ -13,20 +16,15 @@ use A2lix\I18nDoctrineBundle\EventListener\ControllerListener as BaseControllerL
  */
 class ControllerListener extends BaseControllerListener
 {
-    /**
-     *
-     * @param \Symfony\Component\HttpKernel\Event\FilterControllerEvent $event
-     */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelController(ControllerEvent $event): void
     {
-        $controller = $event->getController();
-        list($object, $method) = $controller;
+        [$object, $method] = $event->getController();
 
         $className = ClassUtils::getClass($object);
         $reflectionClass = new \ReflectionClass($className);
         $reflectionMethod = $reflectionClass->getMethod($method);
 
-        if ($this->annotationReader->getMethodAnnotation($reflectionMethod, 'A2lix\I18nDoctrineBundle\Annotation\I18nDoctrine')) {
+        if ($this->annotationReader->getMethodAnnotation($reflectionMethod, I18nDoctrine::class)) {
             $this->om->getFilterCollection()->disable('oneLocale');
 
         } else {

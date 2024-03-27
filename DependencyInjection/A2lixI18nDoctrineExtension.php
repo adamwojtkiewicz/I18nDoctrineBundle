@@ -1,12 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace A2lix\I18nDoctrineBundle\DependencyInjection;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder,
-    Symfony\Component\Config\Definition\Processor,
-    Symfony\Component\Config\FileLocator,
-    Symfony\Component\HttpKernel\DependencyInjection\Extension,
-    Symfony\Component\DependencyInjection\Loader;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\DependencyInjection\Loader;
+use A2lix\I18nDoctrineBundle\Doctrine\ODM\EventListener\DoctrineListener as OdmDoctrineListener;
+use A2lix\I18nDoctrineBundle\Doctrine\ODM\EventListener\ControllerListener as OdmControllerListener;
+use A2lix\I18nDoctrineBundle\Doctrine\ORM\EventListener\DoctrineListener as OrmDoctrineListener;
+use A2lix\I18nDoctrineBundle\Doctrine\ORM\EventListener\ControllerListener as OrmControllerListener;
 
 /**
  * @author David ALLIX
@@ -14,11 +20,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder,
 class A2lixI18nDoctrineExtension extends Extension
 {
     /**
-     *
-     * @param array $configs
-     * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
+     * @throws \Exception
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $processor = new Processor();
         $config = $processor->processConfiguration(new Configuration(), $configs);
@@ -27,7 +31,7 @@ class A2lixI18nDoctrineExtension extends Extension
         $loader->load('services.xml');
 
         $container->setParameter('a2lix_i18n_doctrine.manager_registry', $config['manager_registry']);
-        
+
         $container->setParameter('a2lix_i18n_doctrine.translatableTrait', $config['translatableTrait']);
         $container->setParameter('a2lix_i18n_doctrine.translationTrait', $config['translationTrait']);
         $container->setParameter('a2lix_i18n_doctrine.translatableFetchMode', $config['translatableFetchMode']);
@@ -37,14 +41,14 @@ class A2lixI18nDoctrineExtension extends Extension
         // ORM
         if ('doctrine' === $config['manager_registry']) {
             $container->setAlias('a2lix_i18n_doctrine.object_manager', 'doctrine.orm.entity_manager');
-            $container->setParameter('a2lix_i18n_doctrine.listener.controller.class', 'A2lix\I18nDoctrineBundle\Doctrine\ORM\EventListener\ControllerListener');
-            $container->setParameter('a2lix_i18n_doctrine.listener.doctrine.class', 'A2lix\I18nDoctrineBundle\Doctrine\ORM\EventListener\DoctrineListener');
+            $container->setParameter('a2lix_i18n_doctrine.listener.controller.class', OrmControllerListener::class);
+            $container->setParameter('a2lix_i18n_doctrine.listener.doctrine.class', OrmDoctrineListener::class);
 
-        // ODM MongoDB
+            // ODM MongoDB
         } elseif ('doctrine_mongodb' === $config['manager_registry']) {
             $container->setAlias('a2lix_i18n_doctrine.object_manager', 'doctrine.odm.document_manager');
-            $container->setParameter('a2lix_i18n_doctrine.listener.controller.class', 'A2lix\I18nDoctrineBundle\Doctrine\ODM\EventListener\ControllerListener');
-            $container->setParameter('a2lix_i18n_doctrine.listener.doctrine.class', 'A2lix\I18nDoctrineBundle\Doctrine\ODM\EventListener\DoctrineListener');
+            $container->setParameter('a2lix_i18n_doctrine.listener.controller.class', OdmControllerListener::class);
+            $container->setParameter('a2lix_i18n_doctrine.listener.doctrine.class', OdmDoctrineListener::class);
         }
     }
 
