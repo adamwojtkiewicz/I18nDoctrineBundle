@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace A2lix\I18nDoctrineBundle\Doctrine\ORM\EventListener;
 
-use A2lix\I18nDoctrineBundle\EventListener\DoctrineListener as BaseDoctrineListener,
-    Doctrine\ORM\Event\LoadClassMetadataEventArgs,
-    Doctrine\ORM\Mapping\ClassMetadataInfo,
-    Doctrine\ORM\Mapping\ClassMetadata,
-    Doctrine\ORM\Events;
+use A2lix\I18nDoctrineBundle\EventListener\DoctrineListener as BaseDoctrineListener;
+use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
+use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\Events;
 
 /**
  * Doctrine ORM Listener
@@ -17,35 +19,20 @@ use A2lix\I18nDoctrineBundle\EventListener\DoctrineListener as BaseDoctrineListe
  */
 class DoctrineListener extends BaseDoctrineListener
 {
-    private $translatableTrait;
-    private $translationTrait;
-    private $translatableFetchMode;
-    private $translationFetchMode;
-    private $isRecursive;
+    private string $translatableTrait;
+    private string $translationTrait;
+    private int $translationFetchMode;
+    private bool $isRecursive;
 
-    /**
-     *
-     * @param string $translatableTrait
-     * @param string $translationTrait
-     * @param string $translatableFetchMode
-     * @param string $translationFetchMode
-     * @param boolean $isRecursive
-     */
-    public function __construct($translatableTrait, $translationTrait, $translatableFetchMode, $translationFetchMode, $isRecursive)
+    public function __construct(string $translatableTrait, string $translationTrait, int|string $translationFetchMode, bool $isRecursive)
     {
         $this->translatableTrait = $translatableTrait;
         $this->translationTrait = $translationTrait;
-        $this->translatableFetchMode = $this->convertFetchString($translatableFetchMode);
         $this->translationFetchMode = $this->convertFetchString($translationFetchMode);
         $this->isRecursive = $isRecursive;
     }
 
-    /**
-     *
-     * @param \Doctrine\ORM\Event\LoadClassMetadataEventArgs $eventArgs
-     * @return type
-     */
-    public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
+    public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs): void
     {
         $classMetadata = $eventArgs->getClassMetadata();
 
@@ -55,7 +42,7 @@ class DoctrineListener extends BaseDoctrineListener
 
         // Translatable object?
         if ($this->hasTrait($classMetadata->reflClass, $this->translatableTrait, $this->isRecursive)
-                && !$classMetadata->hasAssociation('translations')) {
+            && !$classMetadata->hasAssociation('translations')) {
 
             $classMetadata->mapOneToMany(array(
                 'fieldName' => 'translations',
@@ -69,7 +56,7 @@ class DoctrineListener extends BaseDoctrineListener
 
         // Translation object?
         if ($this->hasTrait($classMetadata->reflClass, $this->translationTrait, $this->isRecursive)
-                && !$classMetadata->hasAssociation('translatable')) {
+            && !$classMetadata->hasAssociation('translatable')) {
 
             $classMetadata->mapManyToOne(array(
                 'fieldName' => 'translatable',
@@ -88,24 +75,19 @@ class DoctrineListener extends BaseDoctrineListener
             if (!$this->hasUniqueTranslationConstraint($classMetadata, $name)) {
                 $classMetadata->setPrimaryTable(array(
                     'uniqueConstraints' => array(array(
-                            'name' => $name,
-                            'columns' => array('translatable_id', 'locale')
-                        )),
+                        'name' => $name,
+                        'columns' => array('translatable_id', 'locale')
+                    )),
                 ));
             }
         }
     }
 
-    /**
-     *
-     * @param \Doctrine\ORM\Mapping\ClassMetadata $classMetadata
-     * @param type $name
-     * @return boolean
-     */
-    protected function hasUniqueTranslationConstraint(ClassMetadata $classMetadata, $name)
+
+    protected function hasUniqueTranslationConstraint(ClassMetadata $classMetadata, string $name): bool
     {
         if (!isset($classMetadata->table['uniqueConstraints'])) {
-            return;
+            return false;
         }
 
         foreach ($classMetadata->table['uniqueConstraints'] as $constraintName => $constraint) {
@@ -117,36 +99,24 @@ class DoctrineListener extends BaseDoctrineListener
         return false;
     }
 
-    /**
-     *
-     * @param type $fetchMode
-     * @return int
-     */
-    private function convertFetchString($fetchMode)
+    private function convertFetchString(string|int $fetchMode): int
     {
         if (is_int($fetchMode)) {
             return $fetchMode;
         }
 
-        switch ($fetchMode) {
-            case "EAGER":
-                return ClassMetadataInfo::FETCH_EAGER;
-            case "EXTRA_LAZY":
-                return ClassMetadataInfo::FETCH_EXTRA_LAZY;
-            default:
-                return ClassMetadataInfo::FETCH_LAZY;
-        }
+        return match ($fetchMode) {
+            "EAGER" => ClassMetadataInfo::FETCH_EAGER,
+            "EXTRA_LAZY" => ClassMetadataInfo::FETCH_EXTRA_LAZY,
+            default => ClassMetadataInfo::FETCH_LAZY,
+        };
     }
 
-    /**
-     *
-     * @return type
-     */
-    public function getSubscribedEvents()
+    public function getSubscribedEvents(): array
     {
-        return array(
+        return [
             Events::loadClassMetadata,
-        );
+        ];
     }
 
 }

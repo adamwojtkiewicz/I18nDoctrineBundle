@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace A2lix\I18nDoctrineBundle\Doctrine\Interfaces;
 
 /**
@@ -8,7 +10,7 @@ namespace A2lix\I18nDoctrineBundle\Doctrine\Interfaces;
  */
 interface ManyLocalesInterface
 {
-    public function getLocales();
+    public function getLocales(): array;
 
-    public function setLocales($locales);
+    public function setLocales(array $locales): self;
 }

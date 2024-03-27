@@ -15,11 +15,12 @@
         }
     ],
     "require": {
-        "symfony/http-kernel": "~5.0|~6.0",
-        "symfony/validator": "~5.0|~6.0",
-        "symfony/config": "~5.0|~6.0",
-        "symfony/dependency-injection": "~5.0|~6.0",
-        "a2lix/translation-form-bundle": "*"
+        "php": ">=8.1.0",
+        "symfony/http-kernel": "~5.4|~6.4|~7.0",
+        "symfony/validator": "~5.4|~6.4|~7.0",
+        "symfony/config": "~5.4|~6.4|~7.0",
+        "symfony/dependency-injection": "~5.4|~6.4|~7.0",
+        "a2lix/translation-form-bundle": "^3"
     },
     "autoload": {
         "psr-0": {"A2lix\\I18nDoctrineBundle": ""}

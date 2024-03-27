@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace A2lix\I18nDoctrineBundle\EventListener;
 
-use Doctrine\Common\Annotations\Reader,
-    Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Common\Annotations\Reader;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Controller Listener
@@ -12,13 +14,13 @@ use Doctrine\Common\Annotations\Reader,
  */
 abstract class ControllerListener
 {
-    protected $annotationReader;
-    protected $om;
+    protected Reader $annotationReader;
+    protected EntityManagerInterface $om;
 
     /**
      *
-     * @param \Doctrine\Common\Annotations\Reader $annotationReader
-     * @param \Doctrine\ORM\EntityManagerInterface $om
+     * @param Reader $annotationReader
+     * @param EntityManagerInterface $om
      */
     public function __construct(Reader $annotationReader, EntityManagerInterface $om)
     {
