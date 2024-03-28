@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace A2lix\I18nDoctrineBundle\Doctrine\Interfaces;
 
 /**
@@ -8,7 +10,7 @@ namespace A2lix\I18nDoctrineBundle\Doctrine\Interfaces;
  */
 interface OneLocaleInterface
 {
-    public function getLocale();
+    public function getLocale(): string;
 
-    public function setLocale($locale);
+    public function setLocale(string $locale): self;
 }

@@ -1,6 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace A2lix\I18nDoctrineBundle\Doctrine\ORM\Util;
+
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Translation trait.
@@ -19,10 +23,10 @@ trait Translation
     /**
      * @ORM\Column(length=10)
      */
-    protected $locale;
+    protected string $locale;
     protected $translatable;
 
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -32,18 +36,18 @@ trait Translation
         return $this->translatable;
     }
 
-    public function setTranslatable($translatable)
+    public function setTranslatable($translatable): self
     {
         $this->translatable = $translatable;
         return $this;
     }
 
-    public function getLocale()
+    public function getLocale(): string
     {
         return $this->locale;
     }
 
-    public function setLocale($locale)
+    public function setLocale(string $locale): self
     {
         $this->locale = $locale;
         return $this;

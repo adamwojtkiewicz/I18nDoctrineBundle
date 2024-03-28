@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace A2lix\I18nDoctrineBundle\Doctrine\ORM\Filter;
 
-use Doctrine\ORM\Mapping\ClassMetaData,
-    Doctrine\ORM\Query\Filter\SQLFilter;
+use Doctrine\ORM\Mapping\ClassMetaData;
+use Doctrine\ORM\Query\Filter\SQLFilter;
+use A2lix\I18nDoctrineBundle\Doctrine\Interfaces\ManyLocalesInterface;
 
 /**
  *
@@ -11,16 +14,11 @@ use Doctrine\ORM\Mapping\ClassMetaData,
  */
 class ManyLocalesFilter extends SQLFilter
 {
-    /**
-     *
-     * @param \Doctrine\ORM\Mapping\ClassMetaData $targetEntity
-     * @param type $targetTableAlias
-     * @return string
-     */
-    public function addFilterConstraint(ClassMetaData $targetEntity, $targetTableAlias)
+
+    public function addFilterConstraint(ClassMetaData $targetEntity, $targetTableAlias): string
     {
         // Check if the entity implements the right interface
-        if (!$targetEntity->reflClass->implementsInterface('\A2lix\I18nDoctrineBundle\Doctrine\Interfaces\ManyLocalesInterface')) {
+        if (!$targetEntity->reflClass->implementsInterface(ManyLocalesInterface::class)) {
             return "";
         }
 
